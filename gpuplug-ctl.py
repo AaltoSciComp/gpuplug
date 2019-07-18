@@ -7,4 +7,10 @@ import socket
 if __name__ == '__main__':
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect(CTL_SOCKET_PATH)
-    sock.sendall(str.encode('get', 'ascii'))
+    msg = ''
+    while True:
+        b = sock.recv(1)
+        if len(b) == 0:
+            print(msg)
+            break
+        msg += b.decode('ascii')
