@@ -49,7 +49,7 @@ class ControlSocket(socketserver.BaseRequestHandler):
         self.thread.start()
         container_servers.append(self)
 
-        self.request.sendall(str.encode(self.path, 'ascii'))
+        self.request.sendall(str.encode(self.path + '\n', 'ascii'))
         print('Create container socket: {}'.format(self.path))
 
     def get_path(self):
