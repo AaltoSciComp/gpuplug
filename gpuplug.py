@@ -27,6 +27,8 @@ def main():
         msg += b.decode('ascii')
     sock.close()
     print(msg)
+    if msg != 'Ok':
+        exit(-1)
 
 if __name__ == '__main__':
     main()
