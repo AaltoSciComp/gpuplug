@@ -1,0 +1,8 @@
+- Devices nodes aren't automatically generated when the device is added.
+* Allow for multiple GPUs
+    - Don't hardcode device numbers
+    - Implement GPU allocation tracking
+- Reset GPU state upon release
+- Testing and hardening
+    - Timeouts?
+- Proper packaging
