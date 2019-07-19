@@ -9,3 +9,6 @@ $ docker run -it --mount type=bind,source="$(./gpuplug-ctl.py)",target=/tmp/gpup
 
 Bind a GPU from the container:
 # gpuplug.py get
+
+And release it:
+# gpuplug.py put

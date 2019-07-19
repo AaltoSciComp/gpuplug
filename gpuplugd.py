@@ -29,6 +29,12 @@ class ContainerSocket(socketserver.BaseRequestHandler):
                 f.write('a 195:* rwm')
                 f.write('a 236:* rwm')
             print('Bind gpu for container id: {}'.format(cnt_id))
+        elif verb == 'put':
+            with open(PATH + cnt_id + '/devices.deny', 'w+') as f:
+                """ XXX Don't hardcode device numbers """
+                f.write('a 195:* rwm')
+                f.write('a 236:* rwm')
+            print('Unbind gpu for container id: {}'.format(cnt_id))
 
 class ThreadedUnixServer(socketserver.ThreadingMixIn,
                          socketserver.UnixStreamServer):
