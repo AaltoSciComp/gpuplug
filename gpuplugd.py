@@ -3,6 +3,7 @@
 import socketserver
 import os
 import threading
+import grp
 
 CTL_SOCKET_PATH = '/tmp/gpuplug-ctl'
 CNT_SOCKET_BASE_PATH = '/tmp/gpuplug-'
@@ -51,6 +52,10 @@ class ControlSocket(socketserver.BaseRequestHandler):
 if __name__ == '__main__':
     ctl_server = ThreadedUnixServer(CTL_SOCKET_PATH, ControlSocket)
     try:
+        uid = os.stat(CTL_SOCKET_PATH).st_uid
+        gid = grp.getgrnam('docker').gr_gid
+        os.chown(CTL_SOCKET_PATH, uid, gid)
+        os.chmod(CTL_SOCKET_PATH, 0o675)
         ctl_server.serve_forever()
     except KeyboardInterrupt:
         pass
