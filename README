@@ -8,4 +8,4 @@ Start the container:
 $ docker run -it --mount type=bind,source="$(./gpuplug-ctl.py)",target=/tmp/gpuplug gpuplug-test bash
 
 Bind a GPU from the container:
-# gpuplugc.py get
+# gpuplug.py get
