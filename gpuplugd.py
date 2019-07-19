@@ -14,7 +14,20 @@ def container_socket_path(i):
 
 class ContainerSocket(socketserver.BaseRequestHandler):
     def handle(self):
-        print('handle container')
+        PATH = '/sys/fs/cgroup/devices/docker/'
+        msg = ''
+        while True:
+            b = self.request.recv(1)
+            if len(b) == 0:
+                break
+            msg += b.decode('ascii')
+        (verb, cnt_id) = msg.split(':')
+        if verb == 'get':
+            with open(PATH + cnt_id + '/devices.allow', 'w+') as f:
+                """ XXX Don't hardcode device numbers """
+                f.write('a 195:* rwm')
+                f.write('a 236:* rwm')
+            print('Bind gpu for container id: {}'.format(cnt_id))
 
 class ThreadedUnixServer(socketserver.ThreadingMixIn,
                          socketserver.UnixStreamServer):
