@@ -19,22 +19,32 @@ class ContainerSocket(socketserver.BaseRequestHandler):
         msg = ''
         while True:
             b = self.request.recv(1)
-            if len(b) == 0:
+            if len(b) == 0 or b == b'\n':
                 break
             msg += b.decode('ascii')
         (verb, cnt_id) = msg.split(':')
         if verb == 'get':
             with open(PATH + cnt_id + '/devices.allow', 'w+') as f:
-                """ XXX Don't hardcode device numbers """
-                f.write('a 195:* rwm')
-                f.write('a 236:* rwm')
-            print('Bind gpu for container id: {}'.format(cnt_id))
+                try:
+                    """ XXX Don't hardcode device numbers """
+                    f.write('a 195:* rwm')
+                    f.write('a 236:* rwm')
+                    self.request.sendall(str.encode('Ok', 'ascii'))
+                    print('Bind gpu for container id: {}'.format(cnt_id))
+                except:
+                    self.request.sendall(str.encode('Fail', 'ascii'))
+                    print('Failed to bind gpu for container id: {}'.format(cnt_id))
         elif verb == 'put':
             with open(PATH + cnt_id + '/devices.deny', 'w+') as f:
-                """ XXX Don't hardcode device numbers """
-                f.write('a 195:* rwm')
-                f.write('a 236:* rwm')
-            print('Unbind gpu for container id: {}'.format(cnt_id))
+                try:
+                    """ XXX Don't hardcode device numbers """
+                    f.write('a 195:* rwm')
+                    f.write('a 236:* rwm')
+                    self.request.sendall(str.encode('Ok', 'ascii'))
+                    print('Unbind gpu for container id: {}'.format(cnt_id))
+                except:
+                    self.request.sendall(str.encode('Fail', 'ascii'))
+                    print('Failed to unbind gpu for container id: {}'.format(cnt_id))
 
 class ThreadedUnixServer(socketserver.ThreadingMixIn,
                          socketserver.UnixStreamServer):

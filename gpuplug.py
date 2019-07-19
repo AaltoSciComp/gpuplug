@@ -17,8 +17,16 @@ def main():
         return
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect(SOCKET_PATH)
-    sock.sendall(str.encode(sys.argv[1] + ':' + get_container_id(), 'ascii'))
+    sock.sendall(str.encode(sys.argv[1] + ':' + get_container_id() + '\n',
+                            'ascii'))
+    msg = ''
+    while True:
+        b = sock.recv(1)
+        if len(b) == 0:
+            break
+        msg += b.decode('ascii')
     sock.close()
+    print(msg)
 
 if __name__ == '__main__':
     main()
