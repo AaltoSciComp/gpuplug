@@ -79,8 +79,8 @@ if __name__ == '__main__':
         pass
     finally:
         os.unlink(CTL_SOCKET_PATH)
-        for i in range(0, len(container_servers)):
-            with container_servers_lock:
-                container_servers[i].server.shutdown()
-            os.unlink(container_socket_path(i))
+        with container_servers_lock:
+            for s in container_servers:
+                s.server.shutdown()
+                os.unlink(s.path)
         print('bye!')
