@@ -46,6 +46,8 @@ class ContainerSocket(socketserver.BaseRequestHandler):
                 except:
                     self.request.sendall(str.encode('Fail', 'ascii'))
                     print('Failed to unbind gpu for container id: {}'.format(cnt_id))
+        else:
+            self.request.sendall(str.encode('Fail', 'ascii'))
 
 class ThreadedUnixServer(socketserver.ThreadingMixIn,
                          socketserver.UnixStreamServer):
