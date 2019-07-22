@@ -24,30 +24,23 @@ class ContainerSocket(socketserver.BaseRequestHandler):
                 break
             msg += b.decode('ascii')
         (verb, cnt_id) = msg.split(':')
-        if verb == 'get':
-            with open(PATH + cnt_id + '/devices.allow', 'w+') as f:
-                try:
-                    """ XXX Don't hardcode device numbers """
-                    f.write('a 195:* rwm')
-                    f.write('a 236:* rwm')
-                    self.request.sendall(str.encode('Ok', 'ascii'))
-                    print('Bind gpu for container id: {}'.format(cnt_id))
-                except:
-                    self.request.sendall(str.encode('Fail', 'ascii'))
-                    print('Failed to bind gpu for container id: {}'.format(cnt_id))
-        elif verb == 'put':
-            with open(PATH + cnt_id + '/devices.deny', 'w+') as f:
-                try:
-                    """ XXX Don't hardcode device numbers """
-                    f.write('a 195:* rwm')
-                    f.write('a 236:* rwm')
-                    self.request.sendall(str.encode('Ok', 'ascii'))
-                    print('Unbind gpu for container id: {}'.format(cnt_id))
-                except:
-                    self.request.sendall(str.encode('Fail', 'ascii'))
-                    print('Failed to unbind gpu for container id: {}'.format(cnt_id))
-        else:
+
+        sysfs_files = {'get': '/devices.allow', 'put': '/devices.deny'}
+        if not verb in sysfs_files:
             self.request.sendall(str.encode('Fail', 'ascii'))
+
+        with open(PATH + cnt_id + sysfs_files[verb], 'w+') as f:
+            try:
+                """ XXX Don't hardcode device numbers """
+                f.write('a 195:* rwm')
+                f.write('a 236:* rwm')
+                self.request.sendall(str.encode('Ok', 'ascii'))
+                print('{} gpu for container id: {}'.format(verb.capitalize(),
+                                                           cnt_id))
+            except:
+                self.request.sendall(str.encode('Fail', 'ascii'))
+                print('Failed to {} gpu for container id: {}'.format(verb,
+                                                                     cnt_id))
 
 class ThreadedUnixServer(socketserver.ThreadingMixIn,
                          socketserver.UnixStreamServer):
