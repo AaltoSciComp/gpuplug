@@ -8,6 +8,7 @@ import grp
 CTL_SOCKET_PATH = '/tmp/gpuplug-ctl'
 CNT_SOCKET_BASE_PATH = '/tmp/gpuplug-'
 
+container_servers_lock = threading.Lock()
 container_servers = []
 
 def container_socket_path(i):
@@ -57,7 +58,8 @@ class ControlSocket(socketserver.BaseRequestHandler):
         self.thread = threading.Thread(target = server.serve_forever)
         self.thread.daemon = True
         self.thread.start()
-        container_servers.append(self)
+        with container_servers_lock:
+            container_servers.append(self)
 
         self.request.sendall(str.encode(self.path + '\n', 'ascii'))
         print('Create container socket: {}'.format(self.path))
@@ -78,6 +80,7 @@ if __name__ == '__main__':
     finally:
         os.unlink(CTL_SOCKET_PATH)
         for i in range(0, len(container_servers)):
-            container_servers[i].server.shutdown()
+            with container_servers_lock:
+                container_servers[i].server.shutdown()
             os.unlink(container_socket_path(i))
         print('bye!')
