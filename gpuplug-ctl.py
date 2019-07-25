@@ -10,7 +10,7 @@ if __name__ == '__main__':
     msg = ''
     while True:
         b = sock.recv(1)
-        if len(b) == 0 or b == b'\n':
+        if  b == b'\n':
             print(msg)
             break
         msg += b.decode('ascii')

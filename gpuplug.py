@@ -18,7 +18,7 @@ def gpu_req(verb):
     msg = ''
     while True:
         b = sock.recv(1)
-        if len(b) == 0:
+        if b == b'\n':
             break
         msg += b.decode('ascii')
 
@@ -30,7 +30,6 @@ def main():
         print("Usage: gpuplugc.py get|put")
         return
     ret_msg = gpu_req(sys.argv[1])
-    print(ret_msg)
     if ret_msg != 'Ok':
         exit(-1)
 

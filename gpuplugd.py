@@ -21,25 +21,25 @@ class ContainerSocket(socketserver.BaseRequestHandler):
         msg = ''
         while True:
             b = self.request.recv(1)
-            if len(b) == 0 or b == b'\n':
+            if b == b'\n':
                 break
             msg += b.decode('ascii')
         (verb, cnt_id) = msg.split(':')
 
         sysfs_files = {'get': '/devices.allow', 'put': '/devices.deny'}
         if not verb in sysfs_files:
-            self.request.sendall(str.encode('Fail', 'ascii'))
+            self.request.sendall(str.encode('Fail\n', 'ascii'))
 
         with open(PATH + cnt_id + sysfs_files[verb], 'w+') as f:
             try:
                 """ XXX Don't hardcode device numbers """
                 f.write('a 195:* rwm')
                 f.write('a 236:* rwm')
-                self.request.sendall(str.encode('Ok', 'ascii'))
+                self.request.sendall(str.encode('Ok\n', 'ascii'))
                 logging.info('{} gpu for container id: {}'.format(
                         verb.capitalize(), cnt_id))
             except:
-                self.request.sendall(str.encode('Fail', 'ascii'))
+                self.request.sendall(str.encode('Fail\n', 'ascii'))
                 logging.warning('Failed to {} gpu for container id: {}'.format(
                         verb, cnt_id))
 
