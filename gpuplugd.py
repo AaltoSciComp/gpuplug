@@ -26,9 +26,9 @@ class ContainerSocket(socketserver.BaseRequestHandler):
                 self.request.sendall(str.encode('Ok\n', 'ascii'))
                 logging.info('{} gpu for container id: {}'.format(
                         verb.capitalize(), cnt_id))
-            except:
+            except Exception:
                 self.request.sendall(str.encode('Fail\n', 'ascii'))
-                logging.warning('Failed to {} gpu for container id: {}'.format(
+                logging.exception('Failed to {} gpu for container id: {}'.format(
                         verb, cnt_id))
 
 class ThreadedUnixServer(socketserver.ThreadingMixIn,
