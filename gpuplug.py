@@ -15,12 +15,8 @@ def gpu_req(verb):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect(SOCKET_PATH)
     sock.sendall(str.encode(verb + ':' + get_container_id() + '\n', 'ascii'))
-    msg = ''
-    while True:
-        b = sock.recv(1)
-        if b == b'\n':
-            break
-        msg += b.decode('ascii')
+
+    msg = sock.makefile().readline().rstrip()
 
     sock.close()
     return msg

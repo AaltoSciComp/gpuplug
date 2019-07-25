@@ -10,12 +10,8 @@ CNT_SOCKET_PATH = '/tmp/gpuplug'
 class ContainerSocket(socketserver.BaseRequestHandler):
     def handle(self):
         PATH = '/sys/fs/cgroup/devices/docker/'
-        msg = ''
-        while True:
-            b = self.request.recv(1)
-            if b == b'\n':
-                break
-            msg += b.decode('ascii')
+
+        msg = self.request.makefile().readline().rstrip()
         (verb, cnt_id) = msg.split(':')
 
         sysfs_files = {'get': '/devices.allow', 'put': '/devices.deny'}
