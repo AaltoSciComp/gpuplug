@@ -4,23 +4,19 @@ $ docker build . -t gpuplug-test -f=Dockerfile
 Start the host server:
 # ./gpuplugd.py
 
-This creates a UNIX domain socket /tmp/gpuplug-ctl. This process needs
-to access the sysfs of the system and is run as root for that reason.
+This creates a UNIX domain socket /tmp/gpuplug. The gpuplugd server
+needs to access the sysfs of the system and is run as root because of
+that.
 
 Start the container:
-$ docker run -it --mount type=bind,source="$(./gpuplug-ctl.py)",target=/tmp/gpuplug gpuplug-test bash
+$ docker run -it --mount type=bind,source=/tmp/gpuplug,target=/tmp/gpuplug gpuplug-test bash
 
-Here gpuplug-ctl.py requests a new socket from gpuplugd.py via
-/tmp/gpuplug-ctl for communication between the container and gpuplugd.py
-running on the host system. The name of the container communication
-socket is printed by gpuplug-ctl.py and the socket is bind mounted into
-the container by Docker.
+The gpuplug server socket is bind mounted to the container to enable
+communication between the server running on the host and the client
+running in the container.
 
 Bind a GPU from the container:
 # gpuplug.py get
-
-Request a device binding from gpuplugd.py running on the host via the
-bind mounted socket.
 
 And release it:
 # gpuplug.py put

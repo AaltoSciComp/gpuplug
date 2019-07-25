@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
 
-import grp
 import logging
 import os
 import socketserver
 import threading
 
-CTL_SOCKET_PATH = '/tmp/gpuplug-ctl'
-CNT_SOCKET_BASE_PATH = '/tmp/gpuplug-'
-
-container_servers_lock = threading.Lock()
-container_servers = []
-
-def container_socket_path(i):
-    return CNT_SOCKET_BASE_PATH + str(i)
+CNT_SOCKET_PATH = '/tmp/gpuplug'
 
 class ContainerSocket(socketserver.BaseRequestHandler):
     def handle(self):
@@ -47,38 +39,14 @@ class ThreadedUnixServer(socketserver.ThreadingMixIn,
                          socketserver.UnixStreamServer):
     pass
 
-class ControlSocket(socketserver.BaseRequestHandler):
-    def handle(self):
-        self.path = container_socket_path(len(container_servers))
-        server = ThreadedUnixServer(self.path, ContainerSocket)
-        self.thread = threading.Thread(target = server.serve_forever)
-        self.thread.daemon = True
-        self.thread.start()
-        with container_servers_lock:
-            container_servers.append(self)
-
-        self.request.sendall(str.encode(self.path + '\n', 'ascii'))
-        logging.info('Create container socket: {}'.format(self.path))
-
-    def get_path(self):
-        return self.path
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    ctl_server = ThreadedUnixServer(CTL_SOCKET_PATH, ControlSocket)
+    cnt_server = ThreadedUnixServer(CNT_SOCKET_PATH, ContainerSocket)
     try:
-        uid = os.stat(CTL_SOCKET_PATH).st_uid
-        gid = grp.getgrnam('docker').gr_gid
-        os.chown(CTL_SOCKET_PATH, uid, gid)
-        os.chmod(CTL_SOCKET_PATH, 0o675)
         logging.info('Running')
-        ctl_server.serve_forever()
+        cnt_server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
-        os.unlink(CTL_SOCKET_PATH)
-        with container_servers_lock:
-            for s in container_servers:
-                s.server.shutdown()
-                os.unlink(s.path)
+        os.unlink(CNT_SOCKET_PATH)
         logging.info('Bye!')
