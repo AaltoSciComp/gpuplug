@@ -21,6 +21,12 @@ def gpu_req(verb):
     sock.close()
     return msg
 
+class GpuCtx:
+    def __enter__(self):
+        gpu_req('get')
+    def __exit__(self):
+        gpu_req('put')
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: gpuplugc.py get|put")
