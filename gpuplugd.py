@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-import socketserver
-import os
-import threading
 import grp
+import logging
+import os
+import socketserver
+import threading
 
 CTL_SOCKET_PATH = '/tmp/gpuplug-ctl'
 CNT_SOCKET_BASE_PATH = '/tmp/gpuplug-'
@@ -35,12 +36,12 @@ class ContainerSocket(socketserver.BaseRequestHandler):
                 f.write('a 195:* rwm')
                 f.write('a 236:* rwm')
                 self.request.sendall(str.encode('Ok', 'ascii'))
-                print('{} gpu for container id: {}'.format(verb.capitalize(),
-                                                           cnt_id))
+                logging.info('{} gpu for container id: {}'.format(
+                        verb.capitalize(), cnt_id))
             except:
                 self.request.sendall(str.encode('Fail', 'ascii'))
-                print('Failed to {} gpu for container id: {}'.format(verb,
-                                                                     cnt_id))
+                logging.warning('Failed to {} gpu for container id: {}'.format(
+                        verb, cnt_id))
 
 class ThreadedUnixServer(socketserver.ThreadingMixIn,
                          socketserver.UnixStreamServer):
@@ -57,18 +58,20 @@ class ControlSocket(socketserver.BaseRequestHandler):
             container_servers.append(self)
 
         self.request.sendall(str.encode(self.path + '\n', 'ascii'))
-        print('Create container socket: {}'.format(self.path))
+        logging.info('Create container socket: {}'.format(self.path))
 
     def get_path(self):
         return self.path
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     ctl_server = ThreadedUnixServer(CTL_SOCKET_PATH, ControlSocket)
     try:
         uid = os.stat(CTL_SOCKET_PATH).st_uid
         gid = grp.getgrnam('docker').gr_gid
         os.chown(CTL_SOCKET_PATH, uid, gid)
         os.chmod(CTL_SOCKET_PATH, 0o675)
+        logging.info('Running')
         ctl_server.serve_forever()
     except KeyboardInterrupt:
         pass
@@ -78,4 +81,4 @@ if __name__ == '__main__':
             for s in container_servers:
                 s.server.shutdown()
                 os.unlink(s.path)
-        print('bye!')
+        logging.info('Bye!')
