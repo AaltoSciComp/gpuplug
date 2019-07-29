@@ -4,7 +4,9 @@ setup(
     name='gpuplug',
     version='0',
     packages=['gpuplug'],
-    license='TBA',
+    license='MIT',
+    author="Aapo Vienamo",
+    author_email="aapo.vienamo@aalto.fi",
     long_description='Dynamic GPU device binding for containers',
     entry_points = {
         'console_scripts': [

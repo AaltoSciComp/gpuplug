@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 Aapo Vienamo
+# SPDX-License-Identifier: MIT
+
 import configparser
 import logging
 import os
