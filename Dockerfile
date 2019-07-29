@@ -1,7 +1,8 @@
 FROM ubuntu:18.04
 
-RUN apt-get update
-RUN apt-get install -y -q wget libxml2 build-essential module-init-tools python3
+RUN apt-get update && \
+    apt-get install -y -q wget libxml2 build-essential module-init-tools \
+                          python3 python3-setuptools
 RUN mkdir /opt/nvidia-installer
 RUN cd /opt/nvidia-installer && \
     wget "https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.168_418.67_linux.run" && \
@@ -15,4 +16,4 @@ RUN cd /opt/nvidia-installer && \
 ENV CUDA_PATH /opt/nvidia-installer/extract/cuda-toolkit/
 
 ADD . /opt/gpuplug
-ENV PATH /opt/gpuplug:$PATH
+RUN cd /opt/gpuplug && python3 setup.py install
