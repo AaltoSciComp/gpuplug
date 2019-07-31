@@ -26,9 +26,14 @@ def gpu_req(verb):
 
 class GpuCtx:
     def __enter__(self):
-        gpu_req('get')
+        ret_msg = gpu_req('get')
+        if ret_msg != 'Ok':
+            raise RuntimeError(ret_msg)
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        gpu_req('put')
+        ret_msg = gpu_req('put')
+        if ret_msg != 'Ok':
+            raise RuntimeError(ret_msg)
 
 def main():
     if len(sys.argv) < 2:
