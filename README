@@ -1,5 +1,5 @@
 Build the container image:
-$ docker build . -t gpuplug-test -f=Dockerfile
+$ docker build . -t gpuplug-test -f=Dockerfile.cuda-10.1
 
 Start the host server:
 # ./gpuplugd.py
