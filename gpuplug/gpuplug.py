@@ -27,7 +27,7 @@ def gpu_req(verb):
 class GpuCtx:
     def __enter__(self):
         gpu_req('get')
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
         gpu_req('put')
 
 def main():
