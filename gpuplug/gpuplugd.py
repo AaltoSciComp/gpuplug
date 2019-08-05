@@ -37,10 +37,15 @@ class ContainerSocket(socketserver.BaseRequestHandler):
         sysfs_files = {'get': '/devices.allow', 'put': '/devices.deny'}
         if not verb in sysfs_files:
             self.request.sendall(str.encode('Fail\n', 'ascii'))
+            logging.error('Invalid request \"{}\" from {}'.format(verb, cnt_id))
+            return
 
         path = get_device_cgroup_path(cnt_id)
         if path == None:
             self.request.sendall(str.encode('Fail\n', 'ascii'))
+            logging.error('Could not find cgroup device sysfs directory for {}'
+                          .format(cnt_id))
+            return
 
         with open(path + sysfs_files[verb], 'w+') as f:
             try:
