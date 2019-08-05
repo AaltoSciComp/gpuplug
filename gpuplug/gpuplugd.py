@@ -15,9 +15,19 @@ def dev_to_nums(path):
     dev = os.lstat(path).st_rdev
     return (os.major(dev), os.minor(dev))
 
+def get_device_cgroup_path(cnt_id):
+    path_fmts = [
+        '/sys/fs/cgroup/devices/docker/{}/',
+        '/sys/fs/cgroup/devices/system.slice/{}/',
+    ]
+    paths = map(lambda fmt: fmt.format(cnt_id), path_fmts)
+    valid_paths = list(filter(os.path.isdir, paths))
+    if len(valid_paths) == 0:
+        return None
+    return valid_paths[0]
+
 class ContainerSocket(socketserver.BaseRequestHandler):
     def handle(self):
-        PATH = '/sys/fs/cgroup/devices/docker/'
         """ TODO GPU allocation tracking """
         dev_nodes = self.server.gpus[0]['devs']
 
@@ -28,7 +38,11 @@ class ContainerSocket(socketserver.BaseRequestHandler):
         if not verb in sysfs_files:
             self.request.sendall(str.encode('Fail\n', 'ascii'))
 
-        with open(PATH + cnt_id + sysfs_files[verb], 'w+') as f:
+        path = get_device_cgroup_path(cnt_id)
+        if path == None:
+            self.request.sendall(str.encode('Fail\n', 'ascii'))
+
+        with open(path + sysfs_files[verb], 'w+') as f:
             try:
                 for dev_nums in map(dev_to_nums, dev_nodes):
                     f.write('a {0[0]}:{0[1]} rmw'.format(dev_nums))
