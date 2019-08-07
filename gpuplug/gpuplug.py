@@ -12,7 +12,7 @@ def get_container_id():
     f = open('/proc/self/cgroup')
     l = f.readline().rstrip()
     f.close()
-    return l.split('/')[2]
+    return l.split(':')[2]
 
 def gpu_req(verb):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
