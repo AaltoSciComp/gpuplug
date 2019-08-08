@@ -64,7 +64,7 @@ def parse_gpu_devs(path):
 
     return gpus
 
-if __name__ == '__main__':
+def main():
     desc = 'gpuplug host server for dynamic container GPU binding'
     parser = argparse.ArgumentParser(description = desc)
     parser.add_argument('-c', '--conf', metavar = 'CONF',
@@ -85,3 +85,6 @@ if __name__ == '__main__':
     finally:
         os.unlink(SOCKET_PATH)
         logging.info('Bye!')
+
+if __name__ == '__main__':
+    main()
