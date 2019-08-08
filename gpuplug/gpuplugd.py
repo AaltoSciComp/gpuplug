@@ -10,7 +10,7 @@ import os
 import socketserver
 import threading
 
-CNT_SOCKET_PATH = '/tmp/gpuplug'
+SOCKET_PATH = '/run/gpuplug.sock'
 
 def dev_to_nums(path):
     dev = os.lstat(path).st_rdev
@@ -83,5 +83,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     finally:
-        os.unlink(CNT_SOCKET_PATH)
+        os.unlink(SOCKET_PATH)
         logging.info('Bye!')
