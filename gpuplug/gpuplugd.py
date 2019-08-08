@@ -68,7 +68,7 @@ def main():
     desc = 'gpuplug host server for dynamic container GPU binding'
     parser = argparse.ArgumentParser(description = desc)
     parser.add_argument('-c', '--conf', metavar = 'CONF',
-                        default = 'gpuplugd.conf',
+                        default = '/etc/gpuplugd.conf',
                         help = 'config file location')
     args = parser.parse_args()
 
