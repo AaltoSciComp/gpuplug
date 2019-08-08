@@ -3,6 +3,7 @@
 # Copyright 2019 Aapo Vienamo
 # SPDX-License-Identifier: MIT
 
+import argparse
 import configparser
 import logging
 import os
@@ -64,9 +65,16 @@ def parse_gpu_devs(path):
     return gpus
 
 if __name__ == '__main__':
+    desc = 'gpuplug host server for dynamic container GPU binding'
+    parser = argparse.ArgumentParser(description = desc)
+    parser.add_argument('-c', '--conf', metavar = 'CONF',
+                        default = 'gpuplugd.conf',
+                        help = 'config file location')
+    args = parser.parse_args()
+
     logging.basicConfig(level=logging.INFO)
-    gpus = parse_gpu_devs('gpuplugd.conf') # TODO path
-    cnt_server = ThreadedUnixServer(CNT_SOCKET_PATH, ContainerSocket)
+    gpus = parse_gpu_devs(args.conf)
+    cnt_server = ThreadedUnixServer(SOCKET_PATH, ContainerSocket)
     cnt_server.gpus = gpus
 
     try:
