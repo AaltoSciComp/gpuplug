@@ -4,12 +4,12 @@ $ docker build . -t gpuplug-test -f=Dockerfile.cuda-10.1
 Start the host server:
 # ./gpuplugd.py
 
-This creates a UNIX domain socket /tmp/gpuplug. The gpuplugd server
+This creates a UNIX domain socket /run/gpuplug.sock. The gpuplugd server
 needs to access the sysfs of the system and is run as root because of
 that.
 
 Start the container:
-$ docker run -it --mount type=bind,source=/tmp/gpuplug,target=/tmp/gpuplug gpuplug-test bash
+$ docker run -it --mount type=bind,source=/run/gpuplug.sock,target=/run/gpuplug.sock gpuplug-test bash
 
 The gpuplug server socket is bind mounted to the container to enable
 communication between the server running on the host and the client
