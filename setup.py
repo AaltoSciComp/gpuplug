@@ -13,5 +13,8 @@ setup(
             'gpuplugd=gpuplugd.gpuplug:main',
             'gpuplug=gpuplug.gpuplug:main',
         ]
-    }
+    },
+    data_files = [
+        ('/etc/', ['gpuplugd.conf']),
+    ],
 )
