@@ -1,4 +1,9 @@
 from setuptools import setup
+import subprocess
+
+systemd_service_path = subprocess.check_output(
+    ['pkg-config', '--variable=systemdsystemunitdir', 'systemd']
+).decode('utf-8').rstrip()
 
 setup(
     name='gpuplug',
@@ -16,5 +21,6 @@ setup(
     },
     data_files = [
         ('/etc/', ['gpuplugd.conf']),
+        (systemd_service_path, ['gpuplugd.service']),
     ],
 )
