@@ -21,7 +21,7 @@ setup(
     long_description='Dynamic GPU device binding for containers',
     entry_points = {
         'console_scripts': [
-            'gpuplugd=gpuplugd.gpuplug:main',
+            'gpuplugd=gpuplug.gpuplugd:main',
             'gpuplug=gpuplug.gpuplug:main',
         ]
     },
