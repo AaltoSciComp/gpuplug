@@ -1,9 +1,15 @@
 from setuptools import setup
 import subprocess
 
-systemd_service_path = subprocess.check_output(
-    ['pkg-config', '--variable=systemdsystemunitdir', 'systemd']
-).decode('utf-8').rstrip()
+try:
+    systemd_service_path = subprocess.check_output(
+        ['pkg-config', '--variable=systemdsystemunitdir', 'systemd']
+    ).decode('utf-8').rstrip()
+    systemd_service_data_file = [(systemd_service_path, ['gpuplugd.service'])]
+except:
+    print("NOTE: Could not determine systemd service file install path.")
+    print("      Possibly either pkg-config or systemd is missing.")
+    systemd_service_data_file = []
 
 setup(
     name='gpuplug',
@@ -21,6 +27,5 @@ setup(
     },
     data_files = [
         ('/etc/', ['gpuplugd.conf']),
-        (systemd_service_path, ['gpuplugd.service']),
-    ],
+    ] + systemd_service_data_file,
 )
