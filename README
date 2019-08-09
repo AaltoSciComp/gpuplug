@@ -1,8 +1,11 @@
+Install the server on host:
+# python3 setup.py install
+
 Build the container image:
 $ docker build . -t gpuplug-test -f=Dockerfile.cuda-10.1
 
 Start the host server:
-# ./gpuplugd.py
+# gpuplugd
 
 This creates a UNIX domain socket /run/gpuplug.sock. The gpuplugd server
 needs to access the sysfs of the system and is run as root because of
@@ -16,10 +19,10 @@ communication between the server running on the host and the client
 running in the container.
 
 Bind a GPU from the container:
-# gpuplug.py get
+# gpuplug get
 
 And release it:
-# gpuplug.py put
+# gpuplug put
 
 Notes and caveats:
 - The user space portion of the GPU driver stack running in the
