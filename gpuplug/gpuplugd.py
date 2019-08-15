@@ -44,10 +44,6 @@ class ContainerSocket(socketserver.BaseRequestHandler):
                 logging.exception('Failed to {} gpu for container id: {}'.format(
                         verb, cnt_id))
 
-class ThreadedUnixServer(socketserver.ThreadingMixIn,
-                         socketserver.UnixStreamServer):
-    pass
-
 def parse_gpu_devs(path):
     cfg = configparser.ConfigParser(allow_no_value = True)
     cfg.read(path)
@@ -74,7 +70,7 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
     gpus = parse_gpu_devs(args.conf)
-    cnt_server = ThreadedUnixServer(SOCKET_PATH, ContainerSocket)
+    cnt_server = socketserver.UnixStreamServer(SOCKET_PATH, ContainerSocket)
     cnt_server.gpus = gpus
 
     try:
