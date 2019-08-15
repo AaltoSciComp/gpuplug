@@ -72,11 +72,21 @@ def main():
     gpus = parse_gpu_devs(args.conf)
     cnt_server = socketserver.UnixStreamServer(SOCKET_PATH, ContainerSocket)
     cnt_server.gpus = gpus
+    cnt_server_thread = threading.Thread(name = 'cnt_server',
+                                         target = cnt_server.serve_forever)
 
     try:
         logging.info('Running')
-        cnt_server.serve_forever()
+        cnt_server_thread.start()
+        '''
+        This join won't ever actually complete. The join is here just to keep
+        the main thread blocked inside the try-block so the KeyboardInterrupt
+        is caught and the server thread is shut down from the exception handler.
+        '''
+        cnt_server_thread.join()
     except KeyboardInterrupt:
+        cnt_server.shutdown()
+        cnt_server_thread.join()
         pass
     finally:
         os.unlink(SOCKET_PATH)
