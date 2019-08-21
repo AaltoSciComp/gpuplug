@@ -6,7 +6,10 @@
 import socket
 import sys
 
-from gpuplugd import SOCKET_PATH
+try:
+    from gpuplug.gpuplugd import SOCKET_PATH
+except ImportError:
+    from gpuplugd import SOCKET_PATH
 
 def get_container_id():
     f = open('/proc/self/cgroup')
