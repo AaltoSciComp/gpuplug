@@ -44,6 +44,7 @@ def main():
         return
     ret_msg = gpu_req(sys.argv[1])
     if ret_msg != 'Ok':
+        print(ret_msg)
         exit(-1)
 
 if __name__ == '__main__':
