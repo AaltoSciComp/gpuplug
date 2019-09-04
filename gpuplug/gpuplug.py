@@ -13,9 +13,12 @@ except ImportError:
 
 def get_container_id():
     f = open('/proc/self/cgroup')
-    l = f.readline().rstrip()
+    while 1:
+        path = f.readline().rstrip().split(':')[2]
+        if path != '/':
+            break;
     f.close()
-    return l.split(':')[2]
+    return path
 
 def gpu_req(verb):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
