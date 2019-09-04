@@ -58,6 +58,10 @@ def parse_gpu_devs(path):
         except Exception:
             logging.exception('Failed to parse config file: {}'.format(path))
 
+    for idx, gpu in gpus.items():
+        for dev in gpu['devs']:
+            assert(os.path.exists(dev))
+
     return gpus
 
 def main():
