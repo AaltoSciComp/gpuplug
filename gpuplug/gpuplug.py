@@ -12,12 +12,9 @@ except ImportError:
     from gpuplugd import SOCKET_PATH
 
 def get_container_id():
-    f = open('/proc/self/cgroup')
-    while 1:
-        path = f.readline().rstrip().split(':')[2]
-        if path != '/':
-            break;
-    f.close()
+    with open('/proc/self/cgroup') as f:
+        paths = map(lambda l: l.rstrip().split(':'), f.readlines())
+        path = list(filter(lambda p: p[2] != '/', paths))[0][2]
     return path
 
 def gpu_req(verb):
