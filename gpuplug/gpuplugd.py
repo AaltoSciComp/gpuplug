@@ -35,7 +35,9 @@ class ContainerSocket(socketserver.BaseRequestHandler):
         with open(path, 'w+') as f:
             try:
                 for dev_nums in map(dev_to_nums, dev_nodes):
-                    f.write('a {0[0]}:{0[1]} rmw'.format(dev_nums))
+                    cgroup_device_cfg = 'c {0[0]}:{0[1]} rmw'.format(dev_nums)
+                    f.write(cgroup_device_cfg)
+                    logging.debug(cgroup_device_cfg)
                 self.request.sendall(str.encode('Ok\n', 'ascii'))
                 logging.info('{} gpu for container id: {}'.format(
                         verb.capitalize(), cnt_id))
