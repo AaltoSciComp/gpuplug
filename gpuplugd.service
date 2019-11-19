@@ -2,7 +2,6 @@
 Description = gpuplugd host server
 
 [Service]
-# XXX Assumes default setup.py PREFIX
 ExecStart = /usr/local/bin/gpuplugd -c /etc/gpuplugd.conf
 
 [Install]
