@@ -62,7 +62,8 @@ def parse_gpu_devs(path):
 
     for idx, gpu in gpus.items():
         for dev in gpu['devs']:
-            assert(os.path.exists(dev))
+            assert(os.path.exists(dev),
+                   "Could not find {} device".format(dev))
 
     return gpus
 
